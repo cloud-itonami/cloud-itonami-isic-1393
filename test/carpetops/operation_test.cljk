@@ -4,7 +4,7 @@
   (HARD holds, escalation, phase gating) is exercised in
   `carpetops.governor-contract-test`; the Store contract in
   `carpetops.store-contract-test`."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [langgraph.graph :as g]
             [carpetops.operation :as op]
             [carpetops.store :as store]))
