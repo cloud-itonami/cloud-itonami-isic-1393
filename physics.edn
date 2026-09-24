@@ -1,0 +1,33 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README has no "Robotics premise" section. The carpet/rug plant tufts,
+;; weaves and backs carpet. Its physical work here: curing the latex backing
+;; in the backing-line oven, and carrying finished carpet rolls, stacked on a
+;; roll carrier, to the finished-goods store.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-1393"
+ :cases
+ [{:id :backing-latex-cure
+   :kind :thermal
+   :procedure "tufted carpet with wet latex backing passes the backing-line drying oven (hot air on both faces) until the middle of the backing reaches the latex drying temperature; swept :thickness-m is HALF the thickness (heated face to mid-plane), mid-plane adiabatic by symmetry, so the back face is the middle"
+   :params {:conductivity-w-mk 0.06 :density-kg-m3 250.0 :specific-heat-j-kgk 1400.0
+            :t0-c 25.0 :t-hot-c 140.0 :h-front-w-m2k 50.0 :t-back-ambient-c 140.0 :h-back-w-m2k 0.0
+            :threshold-c 100.0 :duration-s 600.0 :nodes 11}
+   :sweep {:param :thickness-m :values [0.002 0.003 0.004 0.005 0.006]}
+   :quantity :time-to-threshold-s
+   :limit {:max 180.0 :basis "estimate: 3-minute residence in the backing oven at line speed"}
+   :boundary {:lo 0.001 :hi 0.015}}
+  {:id :carpet-roll-carrier
+   :kind :transport
+   :procedure "roll carrier AGV takes a 600 kg carpet roll from the backing line to the store; the roll rides higher when rolls are stacked on the carrier; judged at emergency-stop braking"
+   :params {:mass-kg 500.0 :payload-kg 600.0 :distance-m 70.0 :v-max-mps 1.0 :a-max-mps2 0.4
+            :brake-decel-mps2 2.5 :drive-force-n 1500.0 :crr 0.015
+            :cog-height-m 0.35 :support-half-length-m 0.60 :max-time-s 1200.0}
+   :sweep {:param :payload-cog-height-m :values [0.4 0.8 1.2 1.6 2.0]}
+   :quantity :min-tipover-margin
+   :limit {:min 0.5 :basis "estimate: half the restoring moment in reserve, because a round roll can shift on an emergency stop"}
+   :boundary {:lo 0.3 :hi 3.0}}]}
